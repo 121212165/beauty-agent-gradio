@@ -57,7 +57,7 @@ git push -u origin main
 4. **环境变量配置**
    在Vercel项目设置中添加以下环境变量：
    ```
-   DASHSCOPE_API_KEY=sk-d0bef4ed52514a8d83b37f1abdc91692
+   DASHSCOPE_API_KEY=YOUR_DASHSCOPE_API_KEY
    PORT=3000
    ```
 
