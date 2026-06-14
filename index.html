@@ -1,578 +1,216 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>美妆智能体交互原型</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        .container {
-            max-width: 1000px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h1, h2 {
-            color: #d63384; /* Beauty-themed pink */
-        }
-        textarea {
-            width: 98%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            min-height: 100px;
-        }
-        button {
-            background-color: #d63384;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #b0276c;
-        }
-        .section {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #eee;
-            border-radius: 4px;
-        }
-        .results-area span {
-            display: inline-block;
-            padding: 2px 5px;
-            margin: 2px;
-            border-radius: 3px;
-        }
-        .error-typo { background-color: #ffdddd; border-left: 3px solid #f44336; }
-        .error-rule { background-color: #fff0dd; border-left: 3px solid #ff9800; }
-        .suggestion { background-color: #ddffdd; border-left: 3px solid #4CAF50; }
-        .highlight-typo { background-color: yellow; }
-        .highlight-forbidden { background-color: orange; text-decoration: line-through; }
-        .highlight-suggestion { background-color: lightgreen; cursor: pointer; }
-        .tooltip {
-            position: relative;
-            display: inline-block;
-        }
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 200px;
-            background-color: #555;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px 0;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%; 
-            left: 50%;
-            margin-left: -100px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid #d63384;
-            margin-bottom: 15px;
-        }
-        .tab-button {
-            background-color: #f0f0f0;
-            color: #333;
-            padding: 10px 15px;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px 4px 0 0;
-            margin-right: 5px;
-            font-size: 16px;
-        }
-        .tab-button.active {
-            background-color: #d63384;
-            color: white;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .upload-area {
-            border: 2px dashed #d63384;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 15px;
-            cursor: pointer;
-        }
-        .upload-area:hover {
-            background-color: #fde7f3;
-        }
-        #imagePreview {
-            max-width: 100%;
-            max-height: 200px;
-            margin-top: 10px;
-        }
-        .example-buttons {
-            margin-bottom: 10px;
-        }
-        .example-btn {
-            background-color: #f8d7e8;
-            color: #333;
-            padding: 5px 10px;
-            margin-right: 5px;
-            border: 1px solid #d63384;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .example-btn:hover {
-            background-color: #f0b6d3;
-        }
-        .action-buttons {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
-        }
-        .before-after {
-            display: flex;
-            gap: 20px;
-        }
-        .before-after > div {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #eee;
-            border-radius: 4px;
-        }
-        .before-after h4 {
-            margin-top: 0;
-            color: #d63384;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美妆智能体</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;color:#333;line-height:1.6}
+.container{max-width:900px;margin:0 auto;padding:20px}
+h1{color:#d63384;margin-bottom:20px;font-size:1.8rem}
+h2{color:#d63384;margin-bottom:12px;font-size:1.3rem}
+.tabs{display:flex;border-bottom:2px solid #d63384;margin-bottom:20px}
+.tab-btn{background:#f0f0f0;color:#333;padding:10px 18px;border:none;cursor:pointer;border-radius:6px 6px 0 0;margin-right:4px;font-size:15px;transition:.2s}
+.tab-btn.active{background:#d63384;color:#fff}
+.tab-content{display:none;background:#fff;border-radius:8px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.tab-content.active{display:block}
+textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:6px;min-height:100px;font-size:15px;resize:vertical;margin-bottom:12px}
+textarea:focus{outline:none;border-color:#d63384;box-shadow:0 0 0 3px rgba(214,51,132,.15)}
+.btn{background:#d63384;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-size:15px;transition:.2s}
+.btn:hover{background:#b0276c}
+.btn:disabled{background:#ccc;cursor:not-allowed}
+.examples{margin-bottom:12px;display:flex;gap:6px;flex-wrap:wrap}
+.ex-btn{background:#fde7f3;color:#333;padding:5px 12px;border:1px solid #d63384;border-radius:4px;cursor:pointer;font-size:13px}
+.ex-btn:hover{background:#f0b6d3}
+.section{margin-top:20px}
+.section h3{color:#d63384;margin-bottom:8px;font-size:1.1rem}
+.results{background:#fafafa;border:1px solid #eee;border-radius:6px;padding:16px;min-height:60px}
+.results ul{padding-left:20px}
+.results li{margin-bottom:8px;padding:6px 10px;border-radius:4px;font-size:14px}
+.err-typo{background:#ffdddd;border-left:3px solid #f44336}
+.err-rule{background:#fff0dd;border-left:3px solid #ff9800}
+.compare{display:flex;gap:16px;margin-top:12px}
+.compare>div{flex:1;padding:12px;border:1px solid #eee;border-radius:6px;background:#fafafa}
+.compare h4{color:#d63384;margin-bottom:8px}
+.actions{display:none;gap:10px;margin-top:12px;flex-wrap:wrap}
+.highlight-typo{background:yellow}
+.highlight-forbidden{background:orange;text-decoration:line-through}
+.tooltip{position:relative;display:inline-block;cursor:help}
+.tooltip .tip{visibility:hidden;width:200px;background:#555;color:#fff;text-align:center;border-radius:6px;padding:6px;position:absolute;z-index:1;bottom:125%;left:50%;margin-left:-100px;opacity:0;transition:opacity .3s;font-size:12px}
+.tooltip:hover .tip{visibility:visible;opacity:1}
+.info{background:#f8f9fa;border:1px solid #e9ecef;border-radius:6px;padding:16px;margin-top:16px}
+.info h3{color:#d63384;margin-bottom:8px}
+.info ul{padding-left:20px}
+.info li{margin-bottom:4px;font-size:14px}
+.loading{color:#888;font-style:italic}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>美妆智能体 - 交互原型</h1>
+<div class="container">
+<h1>美妆智能体 - 文案合规审查</h1>
 
-        <div class="tabs">
-            <button class="tab-button active" onclick="openTab(event, 'textInputTab')">文字内容分析</button>
-            <button class="tab-button" onclick="openTab(event, 'imageInputTab')">图文内容分析</button>
-            <button class="tab-button" onclick="openTab(event, 'designPhilosophyTab')">设计理念</button>
-        </div>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab(0)">文字分析</button>
+  <button class="tab-btn" onclick="switchTab(1)">设计理念</button>
+</div>
 
-        <!-- 文字输入与分析 -->
-        <div id="textInputTab" class="tab-content active">
-            <h2>文字内容输入与分析</h2>
-            <div class="section">
-                <p>在此处输入或粘贴您的美妆文案、评论、广告词等：</p>
-                <div class="example-buttons">
-                    <button class="example-btn" onclick="loadExample(1)">示例1: 违规词</button>
-                    <button class="example-btn" onclick="loadExample(2)">示例2: 夸大效果</button>
-                    <button class="example-btn" onclick="loadExample(3)">示例3: 赛题案例</button>
-                </div>
-                <textarea id="textContent" placeholder="例如：这款口红的颜色非常好看，质地丝滑，持久不脱妆，强烈推荐给大家！"></textarea>
-                <button onclick="analyzeText()">开始分析</button>
-            </div>
+<div id="tab0" class="tab-content active">
+  <h2>美妆文案输入</h2>
+  <div class="examples">
+    <button class="ex-btn" onclick="loadEx(1)">违规词示例</button>
+    <button class="ex-btn" onclick="loadEx(2)">夸大效果示例</button>
+    <button class="ex-btn" onclick="loadEx(3)">赛题案例</button>
+  </div>
+  <textarea id="input" placeholder="输入或粘贴美妆文案、评论、广告词..."></textarea>
+  <button class="btn" id="analyzeBtn" onclick="analyze()">开始分析</button>
 
-            <div class="section">
-                <h3>分析结果：</h3>
-                <div id="analysisResults" class="results-area">
-                    <p>分析结果将在此显示...</p>
-                </div>
-            </div>
+  <div class="section">
+    <h3>分析结果</h3>
+    <div id="results" class="results"><p>分析结果将在此显示...</p></div>
+  </div>
 
-            <div class="section">
-                <h3>修改建议与标注：</h3>
-                <div id="modificationSuggestions" class="results-area">
-                    <p>修改建议将在此显示...</p>
-                </div>
-                <div class="action-buttons" style="display:none;" id="actionButtons">
-                    <button onclick="applyAllSuggestions()">一键应用所有建议</button>
-                    <button onclick="showBeforeAfter()">查看修改前后对比</button>
-                </div>
-                <div class="before-after" style="display:none;" id="beforeAfterComparison">
-                    <div>
-                        <h4>修改前</h4>
-                        <div id="beforeText"></div>
-                    </div>
-                    <div>
-                        <h4>修改后</h4>
-                        <div id="afterText"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="section">
-                <h3>相关资料推荐：</h3>
-                <div id="resourceRecommendations">
-                    <p>相关资料推荐将在此显示...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 图文输入与分析 -->
-        <div id="imageInputTab" class="tab-content">
-            <h2>图文内容输入与分析 (概念演示)</h2>
-            <div class="section">
-                <p>上传您的美妆相关图片（例如广告图、产品图）：</p>
-                <div class="upload-area" onclick="document.getElementById('imageUpload').click()">
-                    点击此处上传图片
-                    <input type="file" id="imageUpload" accept="image/*" style="display:none;" onchange="previewImage(event)">
-                </div>
-                <img id="imagePreview" src="#" alt="图片预览" style="display:none;"/>
-                <p>输入与图片相关的文字描述：</p>
-                <textarea id="imageRelatedText" placeholder="例如：模特使用了XX品牌新款眼影盘，打造迷人烟熏妆。"></textarea>
-                <button onclick="analyzeImageAndText()">分析图文内容</button>
-            </div>
-            <div class="section">
-                <h3>图文分析结果：</h3>
-                <div id="imageAnalysisResults" class="results-area">
-                    <p>图文分析结果将在此显示 (此部分为概念演示，实际分析需后端支持)...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 设计理念 -->
-        <div id="designPhilosophyTab" class="tab-content">
-            <h2>设计理念阐述</h2>
-            <div class="section">
-                <h3>核心目标</h3>
-                <p>本美妆智能体旨在帮助用户（如美妆品牌方、内容创作者、营销人员）快速审查和优化美妆相关内容，确保其准确性、合规性，并提升内容质量与吸引力。</p>
-                
-                <h3>解决的用户痛点</h3>
-                <ul>
-                    <li><strong>内容错误频发：</strong>错别字、不恰当用词、排版混乱等影响专业形象。</li>
-                    <li><strong>合规风险高：</strong>涉及违禁词、虚假宣传、夸大功效等可能导致处罚。</li>
-                    <li><strong>文化敏感性：</strong>内容可能在不同文化背景下产生误解或负面影响。</li>
-                    <li><strong>优化效率低：</strong>人工审核耗时耗力，且标准不一。</li>
-                    <li><strong>创意枯竭：</strong>缺乏新的内容角度和表达方式。</li>
-                </ul>
-
-                <h3>主要功能模块与实现思路</h3>
-                <h4>1. 内容错误检查 (文字 + 图片中的文字)</h4>
-                <ul>
-                    <li><strong>错别字与语法：</strong>集成成熟的NLP库进行检测和建议修正。</li>
-                    <li><strong>排版与用词：</strong>基于美妆行业语料库和常见表达习惯，提供优化建议。例如，避免使用过于绝对化的词语，推荐更生动形象的描述。</li>
-                </ul>
-
-                <h4>2. 规则符合性审查</h4>
-                <ul>
-                    <li><strong>违禁词检测：</strong>维护并持续更新美妆行业及广告法相关的违禁词库。高亮显示违禁词并提示风险。</li>
-                    <li><strong>虚假/夸大内容识别：</strong>通过关键词、句式分析，识别可能存在的虚假宣传或功效夸大描述。例如，"立即见效"、"100%有效"等。</li>
-                    <li><strong>明显暗示与擦边球：</strong>结合上下文和语义理解，尝试识别可能存在的违规暗示。 (此部分难度较高，初期以明确规则为主)</li>
-                    <li><strong>文化差异提醒：</strong>针对多语言场景，内置常见文化习俗和禁忌提醒。 (高级功能)</li>
-                </ul>
-
-                <h4>3. 修改与优化辅助</h4>
-                <ul>
-                    <li><strong>修改标注：</strong>在原文中直接高亮问题，并提供修改建议的浮窗或注释。</li>
-                    <li><strong>一键替换/采纳：</strong>对简单的修改建议，提供快速操作。</li>
-                    <li><strong>资料推荐：</strong>根据检测到的问题或内容主题，推荐相关的优质文案、合规指南、行业报告等。</li>
-                </ul>
-
-                <h4>4. 交互界面 (美+...)</h4>
-                <p>界面设计追求简洁、专业且具有美感。采用柔和的色彩搭配，清晰的功能分区，直观的操作流程。交互上注重反馈的及时性和友好性。</p>
-                <ul>
-                    <li><strong>"美 + 智能"：</strong> 体现在UI的美观度和AI分析的智能性。</li>
-                    <li><strong>"美 + 高效"：</strong> 通过流畅的交互和精准的分析，提升用户工作效率。</li>
-                    <li><strong>"美 + 合规"：</strong> 帮助用户创作既美观又符合规范的内容。</li>
-                </ul>
-
-                <h4>5. 多语言、多智能体、多模态、多嵌入式 (远期规划)</h4>
-                <ul>
-                    <li><strong>多语言支持：</strong>原型将预留接口，未来可集成翻译和针对不同语言的分析模型。</li>
-                    <li><strong>多智能体协作：</strong>设想未来可以有专门负责不同审查维度（如法律合规、创意优化、文化适应性）的子智能体协同工作。</li>
-                    <li><strong>多模态分析：</strong>
-                        <ul>
-                            <li><strong>文字+图片：</strong>初步实现图片上传和文字输入结合。未来可扩展至OCR识别图片中的文字并纳入分析，甚至进行简单的图像内容理解（如产品识别、场景判断）。</li>
-                            <li><strong>视频文案：</strong>可支持视频字幕文件的分析。</li>
-                        </ul>
-                    </li>
-                    <li><strong>多嵌入式：</strong>未来可考虑将核心分析能力封装成API或SDK，方便嵌入到用户现有的内容管理系统、编辑器等工具中。</li>
-                </ul>
-                
-                <h3>原型交互说明</h3>
-                <p>当前原型主要演示核心的文本分析流程：</p>
-                <ol>
-                    <li>用户在"文字内容输入"区域输入文本。</li>
-                    <li>点击"开始分析"按钮。</li>
-                    <li>"分析结果"区域将以高亮等形式展示识别出的问题（如错别字、疑似违禁词）。</li>
-                    <li>"修改建议与标注"区域会针对问题给出具体的修改意见。</li>
-                    <li>"相关资料推荐"区域会根据内容和问题，提供参考信息。</li>
-                    <li>"图文内容分析"标签页提供了一个概念性的图片上传和关联文本输入界面，实际的图文联合分析需要更复杂的后端支持，此处仅作演示。</li>
-                </ol>
-            </div>
-        </div>
-
+  <div class="section">
+    <h3>修改建议</h3>
+    <div id="suggestions" class="results"></div>
+    <div id="actionBtns" class="actions">
+      <button class="btn" onclick="applyAll()">一键应用所有建议</button>
+      <button class="btn" onclick="showCompare()">查看修改前后对比</button>
     </div>
+    <div id="compare" style="display:none" class="compare">
+      <div><h4>修改前</h4><div id="before"></div></div>
+      <div><h4>修改后</h4><div id="after"></div></div>
+    </div>
+  </div>
 
-    <script>
-        function openTab(evt, tabName) {
-            var i, tabcontent, tabbuttons;
-            tabcontent = document.getElementsByClassName("tab-content");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-            tabbuttons = document.getElementsByClassName("tab-button");
-            for (i = 0; i < tabbuttons.length; i++) {
-                tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
-            }
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
+  <div class="section">
+    <h3>相关资料</h3>
+    <div id="resources" class="results"></div>
+  </div>
+</div>
+
+<div id="tab1" class="tab-content">
+  <h2>设计理念</h2>
+  <div class="info">
+    <h3>核心目标</h3>
+    <p>帮助美妆品牌方、内容创作者、营销人员快速审查和优化美妆内容，确保合规性并提升质量。</p>
+    <h3>解决的痛点</h3>
+    <ul>
+      <li><strong>内容错误：</strong>错别字、不恰当用词影响专业形象</li>
+      <li><strong>合规风险：</strong>违禁词、虚假宣传可能导致处罚</li>
+      <li><strong>效率低下：</strong>人工审核耗时且标准不一</li>
+    </ul>
+    <h3>功能模块</h3>
+    <ul>
+      <li>错别字与语法检测</li>
+      <li>违禁词与合规风险审查</li>
+      <li>用词优化与文案改进建议</li>
+      <li>一键应用修改与前后对比</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<script>
+const EX1='这款美白精华是我用过最好的产品，能够彻底祛斑，100%安全无害，适合所有肤质，使用后立即见效，肌肤白皙透亮，完全根治黑色素沉淀问题。';
+const EX2='我们的抗皱面霜采用纯天然成分，无任何副作用，一周内可以明显去除所有皱纹，让你重返18岁少女肌，效果持久永不反弹，是市面上最有效的抗衰老产品。';
+const EX3='生活需要妆，美丽不打烊！但凡精制的女生，都不会放弃自我管理。脸蛋只有一张，精制一点又何妨？用了这款特效面霜，我的肌肤就像剥了壳的鸡蛋一样立刻变白，色斑色块全部消失，仿佛皮肤吃了仙丹一样，一夜见效，完全无副作用，效果简直绝绝子！';
+
+let currentResult=null, improvedText=null;
+
+function switchTab(i){
+  document.querySelectorAll('.tab-content').forEach((el,j)=>el.classList.toggle('active',j===i));
+  document.querySelectorAll('.tab-btn').forEach((el,j)=>el.classList.toggle('active',j===i));
+}
+
+function loadEx(n){document.getElementById('input').value=[EX1,EX2,EX3][n-1]}
+
+function esc(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
+
+async function analyze(){
+  const text=document.getElementById('input').value.trim();
+  const resEl=document.getElementById('results');
+  const sugEl=document.getElementById('suggestions');
+  const resDiv=document.getElementById('resources');
+
+  if(!text){resEl.innerHTML='<p>请输入内容后再分析。</p>';return}
+
+  document.getElementById('analyzeBtn').disabled=true;
+  resEl.innerHTML='<p class="loading">正在分析中...</p>';
+  sugEl.innerHTML='';resDiv.innerHTML='';
+  document.getElementById('actionBtns').style.display='none';
+  document.getElementById('compare').style.display='none';
+
+  try{
+    const r=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
+    if(!r.ok){const e=await r.json();throw new Error(e.error||'请求失败')}
+    const {data}=await r.json();
+    currentResult=data;
+
+    let processed=text;
+    if(data.errors?.length){
+      data.errors.forEach(e=>{
+        const cls=e.type==='typo'?'highlight-typo':'highlight-forbidden';
+        if(processed.includes(e.text)){
+          processed=processed.replace(new RegExp(esc(e.text),'g'),
+            `<span class="${cls} tooltip">${e.text}<span class="tip">${e.suggestion||e.reason||''}</span></span>`);
         }
+      });
+    }
+    resEl.innerHTML=`<p><strong>原文（带标注）：</strong></p><div>${processed}</div>`;
 
-        function previewImage(event) {
-            const reader = new FileReader();
-            reader.onload = function(){
-                const output = document.getElementById('imagePreview');
-                output.src = reader.result;
-                output.style.display = 'block';
-            }
-            reader.readAsDataURL(event.target.files[0]);
-        }
+    let shtml='<ul>';
+    if(data.errors?.length){
+      data.errors.forEach(e=>{
+        shtml+=`<li class="${e.type==='typo'?'err-typo':'err-rule'}">"${e.text}"${e.reason?' — '+e.reason:''}${e.suggestion?' → 建议：'+e.suggestion:''}</li>`;
+      });
+    }
+    if(data.suggestions?.length){
+      data.suggestions.forEach(s=>{
+        shtml+=`<li>"${s.original}" → "${s.improved}"（${s.reason}）</li>`;
+      });
+    }
+    shtml+=shtml==='<ul>'?'<li>暂无具体修改建议。</li>':'';
+    shtml+='</ul>';
+    sugEl.innerHTML=shtml;
 
-        // 加载示例文本
-        function loadExample(exampleNum) {
-            const textArea = document.getElementById('textContent');
-            switch(exampleNum) {
-                case 1:
-                    textArea.value = "这款美白精华是我用过最好的产品，能够彻底祛斑，100%安全无害，适合所有肤质，使用后立即见效，肌肤白皙透亮，完全根治黑色素沉淀问题。";
-                    break;
-                case 2:
-                    textArea.value = "我们的抗皱面霜采用纯天然成分，无任何副作用，一周内可以明显去除所有皱纹，让你重返18岁少女肌，效果持久永不反弹，是市面上最有效的抗衰老产品。";
-                    break;
-                case 3:
-                    textArea.value = "生活需要妆，美丽不打烊！但凡精制的女生，都不会放弃自我管理。脸蛋只有一张，精制一点又何妨？用了这款特效面霜，我的肌肤就像剥了壳的鸡蛋一样立刻变白，色斑色块全部消失，仿佛皮肤吃了仙丹一样，一夜见效，完全无副作用，效果简直绝绝子！";
-                    break;
-                default:
-                    break;
-            }
-        }
+    let rhtml='<ul>';
+    if(data.resources?.length){
+      data.resources.forEach(r=>{
+        rhtml+=typeof r==='object'?`<li><strong>${r.title||'资源'}</strong>: ${r.relevance||''}</li>`:`<li>${r}</li>`;
+      });
+    }
+    if(data.compliance?.issues?.length){
+      rhtml+=`<li>合规性问题：${data.compliance.issues.join(', ')} (评分: ${data.compliance.score||'N/A'})</li>`;
+    }
+    rhtml+=rhtml==='<ul>'?'<li>暂无相关资料。</li>':'';
+    rhtml+='</ul>';
+    resDiv.innerHTML=rhtml;
 
-        // 存储分析结果
-        let currentAnalysisResult = null;
-        let improvedText = null;
+    document.getElementById('actionBtns').style.display='flex';
+    document.getElementById('before').textContent=text;
+    improvedText=data.improved_full_text||genImproved(text,data);
+    document.getElementById('after').textContent=improvedText;
+  }catch(err){
+    resEl.innerHTML=`<p style="color:red">分析失败：${err.message}</p>`;
+  }finally{
+    document.getElementById('analyzeBtn').disabled=false;
+  }
+}
 
-        async function analyzeText() {
-            const text = document.getElementById('textContent').value;
-            const analysisResultsDiv = document.getElementById('analysisResults');
-            const modificationSuggestionsDiv = document.getElementById('modificationSuggestions');
-            const resourceRecommendationsDiv = document.getElementById('resourceRecommendations');
+function genImproved(text,data){
+  let t=text;
+  data.errors?.forEach(e=>{if(e.suggestion)t=t.replace(new RegExp(esc(e.text),'g'),e.suggestion)});
+  data.suggestions?.forEach(s=>{if(s.improved)t=t.replace(new RegExp(esc(s.original),'g'),s.improved)});
+  return t;
+}
 
-            analysisResultsDiv.innerHTML = '<p>正在分析中，请稍候...</p>';
-            modificationSuggestionsDiv.innerHTML = '';
-            resourceRecommendationsDiv.innerHTML = '';
+function applyAll(){
+  if(improvedText){document.getElementById('input').value=improvedText;alert('已应用所有修改建议！')}
+  else alert('没有可应用的修改建议。');
+}
 
-            if (!text.trim()) {
-                analysisResultsDiv.innerHTML = '<p>请输入内容后再进行分析。</p>';
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/analyze-text', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ text }),
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                const data = result.data;
-                currentAnalysisResult = data; // 存储分析结果
-
-                // 显示原文及AI标注 (此部分需要根据AI返回的具体格式来调整高亮逻辑)
-                // 简单示例：直接显示AI返回的分析，或根据错误/建议高亮原文
-                let processedText = text;
-                if (data.errors && data.errors.length > 0) {
-                    data.errors.forEach(err => {
-                        const highlightClass = err.type === 'typo' ? 'highlight-typo' : 'highlight-forbidden';
-                        // 注意：简单的replace可能不适用于复杂情况，需要更健壮的文本处理
-                        if (processedText.includes(err.text)) {
-                           processedText = processedText.replace(new RegExp(escapeRegExp(err.text), 'g'), 
-                                `<span class="${highlightClass} tooltip">${err.text}<span class="tooltiptext">${err.suggestion || err.reason}</span></span>`);
-                        }
-                    });
-                }
-                analysisResultsDiv.innerHTML = `<p><strong>原文（带标注）：</strong></p><div>${processedText}</div>`;
-
-                let suggestionsHTML = '<ul>';
-                if (data.errors && data.errors.length > 0) {
-                    data.errors.forEach(err => {
-                        suggestionsHTML += `<li class="${err.type === 'typo' ? 'error-typo' : 'error-rule'}">检测到"${err.text}"。${err.reason ? `原因：${err.reason}` : ''} ${err.suggestion ? `建议：${err.suggestion}`: ''}</li>`;
-                    });
-                }
-                if (data.suggestions && data.suggestions.length > 0) {
-                    data.suggestions.forEach(sug => {
-                        suggestionsHTML += `<li>针对"${sug.original}"，改进建议："${sug.improved}"。原因：${sug.reason}</li>`;
-                    });
-                }
-                if (suggestionsHTML === '<ul>') {
-                    suggestionsHTML += '<li>暂无具体修改建议。</li>';
-                }
-                suggestionsHTML += '</ul>';
-                modificationSuggestionsDiv.innerHTML = suggestionsHTML;
-
-                let resourcesHTML = '<ul>';
-                if (data.resources && data.resources.length > 0) {
-                    data.resources.forEach(res => {
-                        if (typeof res === 'object' && res !== null) {
-                            resourcesHTML += `<li><strong>${res.title || '资源'}</strong> (${res.type || '类型'}): ${res.relevance || '相关资源'}</li>`;
-                        } else {
-                            resourcesHTML += `<li>${res}</li>`;
-                        }
-                    });
-                }
-                if (data.compliance && data.compliance.issues && data.compliance.issues.length > 0){
-                    resourcesHTML += `<li>合规性问题：${data.compliance.issues.join(', ')} (评分: ${data.compliance.score || 'N/A'})</li>`;
-                }
-                if (resourcesHTML === '<ul>') {
-                    resourcesHTML += '<li>暂无相关资料推荐。</li>';
-                }
-                resourcesHTML += '</ul>';
-                resourceRecommendationsDiv.innerHTML = resourcesHTML;
-
-                // 显示操作按钮
-                document.getElementById('actionButtons').style.display = 'flex';
-                document.getElementById('beforeAfterComparison').style.display = 'none';
-                
-                // 存储原始文本
-                document.getElementById('beforeText').innerHTML = text;
-
-                // 使用API返回的完整修改后文案（如果有）
-                if (data.improved_full_text) {
-                    improvedText = data.improved_full_text;
-                    document.getElementById('afterText').innerHTML = improvedText;
-                } else {
-                    // 否则尝试生成改进后的文本
-                    improveText(text, data);
-                }
-
-            } catch (error) {
-                console.error('分析失败:', error);
-                analysisResultsDiv.innerHTML = `<p class="error-rule">分析失败：${error.message}</p>`;
-            }
-        }
-
-        // Helper function to escape regex special characters
-        function escapeRegExp(string) {
-            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-        }
-
-        // 生成改进后的文本
-        function improveText(originalText, analysisData) {
-            let text = originalText;
-            
-            // 应用错误修改
-            if (analysisData.errors && analysisData.errors.length > 0) {
-                analysisData.errors.forEach(err => {
-                    if (err.suggestion) {
-                        text = text.replace(new RegExp(escapeRegExp(err.text), 'g'), err.suggestion);
-                    }
-                });
-            }
-            
-            // 应用建议修改
-            if (analysisData.suggestions && analysisData.suggestions.length > 0) {
-                analysisData.suggestions.forEach(sug => {
-                    if (sug.improved) {
-                        text = text.replace(new RegExp(escapeRegExp(sug.original), 'g'), sug.improved);
-                    }
-                });
-            }
-            
-            improvedText = text;
-            document.getElementById('afterText').innerHTML = text;
-        }
-
-        // 一键应用所有建议
-        function applyAllSuggestions() {
-            if (improvedText) {
-                document.getElementById('textContent').value = improvedText;
-                alert("已应用所有修改建议！");
-            } else {
-                alert("没有可应用的修改建议。");
-            }
-        }
-
-        // 显示修改前后对比
-        function showBeforeAfter() {
-            document.getElementById('beforeAfterComparison').style.display = 'flex';
-        }
-
-        async function analyzeImageAndText() {
-            const imageFile = document.getElementById('imageUpload').files[0];
-            const text = document.getElementById('imageRelatedText').value;
-            const resultsDiv = document.getElementById('imageAnalysisResults');
-
-            resultsDiv.innerHTML = '<p>正在分析中，请稍候...</p>';
-
-            if (!imageFile) {
-                resultsDiv.innerHTML = '<p class="error-rule">请先上传图片。</p>';
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('image', imageFile);
-            formData.append('text', text);
-
-            try {
-                const response = await fetch('/api/analyze-image-text', {
-                    method: 'POST',
-                    body: formData, // FormData会自动设置Content-Type为multipart/form-data
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                const data = result.data; // 后端返回的已经是JSON对象了
-
-                let analysisHTML = '<p><strong>图文分析结果：</strong></p>';
-                // 根据AI返回的实际图文分析结果来展示，这里仅作示例
-                if (typeof data === 'object' && data !== null) {
-                    analysisHTML += '<ul>';
-                    for (const key in data) {
-                        if (Object.hasOwnProperty.call(data, key)) {
-                            analysisHTML += `<li><strong>${key}:</strong> ${JSON.stringify(data[key])}</li>`;
-                        }
-                    }
-                    analysisHTML += '</ul>';
-                } else {
-                    analysisHTML += `<p>${data}</p>`; // 如果返回的是简单文本
-                }
-                resultsDiv.innerHTML = analysisHTML;
-
-            } catch (error) {
-                console.error('图文分析失败:', error);
-                resultsDiv.innerHTML = `<p class="error-rule">图文分析失败：${error.message}</p>`;
-            }
-        }
-
-        // 默认打开第一个tab
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementsByClassName('tab-button')[0].click();
-        });
-
-    </script>
+function showCompare(){document.getElementById('compare').style.display='flex'}
+</script>
 </body>
 </html>
